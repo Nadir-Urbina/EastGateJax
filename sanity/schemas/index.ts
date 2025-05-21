@@ -6,6 +6,7 @@ import homeGroup from './homeGroup';
 import author from './author';
 import category from './category';
 import event from './event';
+import leadershipTeam from './leadershipTeam';
 
 export const schemaTypes = [
   blogPost,
@@ -15,5 +16,6 @@ export const schemaTypes = [
   homeGroup,
   author,
   category,
-  event
+  event,
+  leadershipTeam
 ]; 

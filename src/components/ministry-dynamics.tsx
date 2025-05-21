@@ -45,7 +45,7 @@ export function MinistryDynamics({ ministries = [], isLoading = false }: Ministr
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300, damping: 10 }}
               >
-                <Link href={`/ministries/${ministry.slug.current}`}>
+                <Link href={ministry.slug?.current ? `/ministries/${ministry.slug.current}` : '#'}>
                   <div className="aspect-video relative">
                     {ministry.image && ministry.image.asset ? (
                       <Image

@@ -46,21 +46,31 @@ export function LatestSermons({ sermons = [], isLoading = false }: LatestSermons
         ) : sermons.length > 0 ? (
           // Actual sermon content
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {sermons.map((sermon) => (
-              <div key={sermon._id} className="flex flex-col rounded-lg bg-white shadow-sm overflow-hidden">
-                <div className="aspect-video relative">
-                  <YoutubeEmbed
-                    videoId={extractYouTubeId(sermon.youtubeUrl) || ''}
-                    title={sermon.title}
-                  />
+            {sermons.map((sermon) => {
+              // Extract YouTube video ID from URL if available
+              const youtubeId = sermon.youtubeUrl ? extractYouTubeId(sermon.youtubeUrl) : null;
+              
+              return (
+                <div key={sermon._id} className="overflow-hidden rounded-lg">
+                  {youtubeId ? (
+                    <div className="aspect-video">
+                      <YoutubeEmbed videoId={youtubeId} />
+                    </div>
+                  ) : (
+                    <div className="aspect-video bg-gray-200 flex items-center justify-center">
+                      <span className="text-gray-500">Video Unavailable</span>
+                    </div>
+                  )}
+                  <div className="mt-4">
+                    <h3 className="text-lg font-semibold">{sermon.title || 'Untitled Sermon'}</h3>
+                    <p className="text-gray-600 mt-1">{sermon.preacher ? `by ${sermon.preacher}` : ''}</p>
+                    <p className="text-gray-500 text-sm mt-1">
+                      {sermon.date ? new Date(sermon.date).toLocaleDateString() : 'Date unavailable'}
+                    </p>
+                  </div>
                 </div>
-                <div className="p-6 flex-grow">
-                  <h3 className="mb-2 text-xl font-semibold">{sermon.title}</h3>
-                  <p className="text-gray-600 mb-2">{sermon.preacher}</p>
-                  <p className="text-sm text-gray-500">{formatDate(sermon.date)}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           // Empty state when no sermons are available

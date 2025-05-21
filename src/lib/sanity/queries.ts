@@ -1,7 +1,7 @@
-// GROQ queries for Sanity CMS
+// GROQ queries for Sanity CMS - simplified for initial testing
 
-// Ministry Dynamics
-export const ministryDynamicsQuery = `*[_type == "ministryDynamic"] | order(order asc) {
+// Ministry Dynamics - Simple version
+export const ministryDynamicsQuery = `*[_type == "ministryDynamic"] {
   _id,
   title,
   description,
@@ -9,8 +9,8 @@ export const ministryDynamicsQuery = `*[_type == "ministryDynamic"] | order(orde
   slug
 }`;
 
-// Testimonials
-export const testimonialsQuery = `*[_type == "testimonial"] | order(_createdAt desc) {
+// Testimonials - Simple version
+export const testimonialsQuery = `*[_type == "testimonial"] {
   _id,
   name,
   role,
@@ -18,113 +18,97 @@ export const testimonialsQuery = `*[_type == "testimonial"] | order(_createdAt d
   image
 }`;
 
-// Encounter Home Groups
-export const homeGroupsQuery = `*[_type == "homeGroup"] {
+// Latest Messages/Sermons - Simple version
+export const sermonsQuery = `*[_type == "sermon"] | order(date desc)[0...3] {
   _id,
   title,
-  slug,
   description,
-  county,
-  locationZip,
-  meetingDay,
-  meetingTime,
-  ageGroup,
-  leaders,
-  contactEmail,
-  contactPhone,
-  image
-}`;
-
-// Latest Messages/Sermons
-export const sermonsQuery = `*[_type == "sermon"] | order(date desc) [0...3] {
-  _id,
-  title,
-  preacher,
   date,
-  description,
   youtubeUrl,
+  preacher,
   image
 }`;
 
-// Blog Posts for Homepage
-export const recentBlogPostsQuery = `*[_type == "blogPost"] | order(publishedAt desc) [0...3] {
+// Blog Posts - Simple version
+export const recentBlogPostsQuery = `*[_type == "blogPost"] | order(publishedAt desc)[0...3] {
   _id,
   title,
   slug,
-  excerpt,
-  publishedAt,
   mainImage,
-  "categories": categories[]->title,
+  publishedAt,
+  excerpt,
   "author": author->name
 }`;
 
-// Single Blog Post
-export const singleBlogPostQuery = `*[_type == "blogPost" && slug.current == $slug][0] {
-  _id,
-  title,
-  slug,
-  body,
-  publishedAt,
-  mainImage,
-  "categories": categories[]->title,
-  "author": author->name,
-  "authorImage": author->image
-}`;
-
-// Missions
-export const missionsQuery = `*[_type == "mission"] | order(order asc) {
+// Home Groups - Simple version
+export const homeGroupsQuery = `*[_type == "homeGroup"] {
   _id,
   title,
   description,
-  location,
-  startDate,
-  ongoing,
-  image,
-  contactPerson,
-  donationLink
+  leaders,
+  county,
+  meetingDay,
+  meetingTime,
+  locationZip,
+  contactEmail,
+  image
 }`;
 
-// Single Ministry Dynamic
+// Leadership Team - Simple version
+export const leadershipTeamQuery = `*[_type == "leadershipTeam"] {
+  _id,
+  name,
+  position,
+  image,
+  socialMedia,
+  bio
+}`;
+
+// Events - Simple version
+export const eventsQuery = `*[_type == "event"] {
+  _id,
+  name,
+  description,
+  date,
+  location,
+  image
+}`;
+
+// Keep other complex queries for reference
 export const singleMinistryQuery = `*[_type == "ministryDynamic" && slug.current == $slug][0] {
   _id,
   title,
   description,
   fullDescription,
-  image,
-  gallery,
-  leadersInfo,
-  events,
-  contactInfo
+  image
 }`;
 
-// All Blog Posts with Pagination
-export const allBlogPostsQuery = `*[_type == "blogPost"] | order(publishedAt desc) [$start...$end] {
+export const singleBlogPostQuery = `*[_type == "blogPost" && slug.current == $slug][0] {
   _id,
   title,
   slug,
-  excerpt,
-  publishedAt,
   mainImage,
-  "categories": categories[]->title,
-  "author": author->name
+  body
 }`;
 
-// Count of Blog Posts for Pagination
-export const blogPostsCountQuery = `count(*[_type == "blogPost"])`;
-
-// Categories
-export const categoriesQuery = `*[_type == "category"] {
+export const missionsQuery = `*[_type == "mission"] {
   _id,
   title,
-  description
-}`;
-
-// Events
-export const eventsQuery = `*[_type == "event" && date >= now()] | order(date asc) {
-  _id,
-  name,
-  date,
   description,
   location,
   image
+}`;
+
+export const allBlogPostsQuery = `*[_type == "blogPost"] | order(publishedAt desc)[$start...$end] {
+  _id,
+  title,
+  slug,
+  mainImage
+}`;
+
+export const blogPostsCountQuery = `count(*[_type == "blogPost"])`;
+
+export const categoriesQuery = `*[_type == "category"] {
+  _id,
+  title
 }`; 

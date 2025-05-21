@@ -28,13 +28,16 @@ export interface MinistryDynamic {
   events?: Event[];
   contactInfo?: string;
   order?: number;
+  leader?: string;
+  meetingTime?: string;
+  meetingLocation?: string;
 }
 
 // Testimonials
 export interface Testimonial {
   _id: string;
   name: string;
-  role: string;
+  role?: string;
   testimony: string;
   image?: SanityImage;
 }
@@ -60,10 +63,10 @@ export interface HomeGroup {
 export interface Sermon {
   _id: string;
   title: string;
-  preacher: string;
-  date: string;
   description?: string;
+  date: string;
   youtubeUrl: string;
+  preacher?: string;
   image?: SanityImage;
 }
 
@@ -123,10 +126,26 @@ export interface Event {
   };
 }
 
+// Leadership Team
+export interface LeadershipTeam {
+  _id: string;
+  name: string;
+  position: string;
+  image: SanityImage;
+  order?: number;
+  socialMedia?: {
+    facebook?: string;
+    instagram?: string;
+  };
+  bio: any[];
+}
+
 // Home Page Data
 export interface HomePageData {
   ministries: MinistryDynamic[];
   testimonials: Testimonial[];
   sermons: Sermon[];
   blogPosts: BlogPost[];
+  homeGroups?: HomeGroup[];
+  leadershipTeam?: LeadershipTeam[];
 } 

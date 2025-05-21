@@ -70,7 +70,7 @@
     "resend": "^4.5.1",
     "sanity": "^3.82.0",
     "sonner": "^1.7.1",
-    "styled-components": "^6.1.16",
+    "styled-components": "^6.1.18",
     "tailwind-merge": "^2.5.5",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",

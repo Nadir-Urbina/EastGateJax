@@ -13,13 +13,20 @@ import { YoutubeEmbed } from "@/components/youtube-embed"
 import { Footer } from "@/components/footer"
 import { PlaceholderImage } from "@/components/placeholder-image"
 import { MinistryDynamics } from "@/components/ministry-dynamics"
+import { LeadershipTeam } from "@/components/leadership-team"
 import { Testimonials } from "@/components/testimonials"
 import { LatestSermons } from "@/components/latest-sermons"
 import { HomeGroups } from "@/components/home-groups"
 import { BlogPreview } from "@/components/blog-preview"
 import { fetchHomeData, fetchEvents } from "@/lib/sanity/sanity.utils"
 import { HomePageData, Event } from "@/lib/sanity/types"
-import { urlFor } from '@/lib/sanity/imageUrl'
+import { getSanityImageSrcFromRef } from '@/lib/sanity/client'
+
+// Simple helper for event image URLs
+function getEventImageUrl(image: any) {
+  if (!image || !image.asset || !image.asset._ref) return '';
+  return getSanityImageSrcFromRef(image.asset._ref);
+}
 
 function useAnimateInView() {
   const controls = useAnimation()
@@ -31,11 +38,15 @@ function useAnimateInView() {
     }
   }, [controls, inView])
 
-  return [ref, controls]
+  return { ref, controls }
 }
 
-function AnimatedSection({ children }) {
-  const [ref, controls] = useAnimateInView()
+interface AnimatedSectionProps {
+  children: React.ReactNode;
+}
+
+function AnimatedSection({ children }: AnimatedSectionProps) {
+  const { ref, controls } = useAnimateInView()
 
   return (
     <motion.section
@@ -77,7 +88,9 @@ export default function Page() {
   useEffect(() => {
     async function loadData() {
       try {
+        console.log("Starting to fetch home data");
         const data = await fetchHomeData();
+        console.log("Fetched home data:", data);
         setHomeData(data);
       } catch (error) {
         console.error('Error loading home page data:', error);
@@ -216,69 +229,71 @@ export default function Page() {
       <AnimatedSection>
         <section className="bg-gray-50 py-16">
           <div className="container px-4">
-            <div className="mx-auto max-w-3xl text-center">
-              <h2 className="mb-8 text-3xl font-bold">Join Us in Worship</h2>
-              {eventsLoading ? (
-                <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2">
-                  {[1, 2].map((i) => (
-                    <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col animate-pulse w-full">
-                      <div className="w-full h-48 bg-gray-200"></div>
-                      <div className="flex flex-col p-6 flex-1">
-                        <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                        <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                        <div className="h-8 bg-gray-200 rounded w-1/3 mt-auto"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : events.length === 0 ? (
-                <div className="grid gap-8 sm:grid-cols-2">
-                  <div className="rounded-lg bg-white p-6 shadow-sm w-full">
-                    <h3 className="mb-2 font-semibold">Sunday Service</h3>
-                    <p className="text-gray-600">10:30 AM</p>
-                  </div>
-                  <div className="rounded-lg bg-white p-6 shadow-sm w-full">
-                    <h3 className="mb-2 font-semibold">Wednesday Bible Study</h3>
-                    <p className="text-gray-600">7:00 PM</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2">
-                  {events.map(event => (
-                    <div key={event._id} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col w-full">
-                      {event.image && event.image.asset ? (
-                        <div className="w-full h-48 relative">
-                          <Image
-                            src={urlFor(event.image)}
-                            alt={event.image.alt || event.name}
-                            fill
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                          <span className="text-gray-400">No Image</span>
-                        </div>
-                      )}
-                      <div className="flex flex-col p-6 flex-1 text-left">
-                        <h3 className="mb-2 font-semibold text-lg truncate">{event.name}</h3>
-                        <p className="text-gray-600 font-medium mb-1 truncate">{event.location}</p>
-                        <p className="text-gray-500 text-sm mb-2">{new Date(event.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</p>
-                        <p className="text-gray-700 text-sm mb-4">{event.description.length > 150 ? event.description.slice(0, 150) + '…' : event.description}</p>
-                        <button
-                          className="mt-auto px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
-                          onClick={() => setModalEvent(event)}
-                        >
-                          View More
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+            {/* Center-aligned title */}
+            <div className="text-center mb-12">
+              <h2 className="mb-4 text-3xl font-bold">Join Us in Worship</h2>
             </div>
+            
+            {eventsLoading ? (
+              <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2">
+                {[1, 2].map((i) => (
+                  <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col animate-pulse w-full">
+                    <div className="w-full h-48 bg-gray-200"></div>
+                    <div className="flex flex-col p-6 flex-1">
+                      <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                      <div className="h-8 bg-gray-200 rounded w-1/3 mt-auto"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : events.length === 0 ? (
+              <div className="grid gap-8 sm:grid-cols-2">
+                <div className="rounded-lg bg-white p-6 shadow-sm w-full">
+                  <h3 className="mb-2 font-semibold">Sunday Service</h3>
+                  <p className="text-gray-600">10:30 AM</p>
+                </div>
+                <div className="rounded-lg bg-white p-6 shadow-sm w-full">
+                  <h3 className="mb-2 font-semibold">Wednesday Bible Study</h3>
+                  <p className="text-gray-600">7:00 PM</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {events.map(event => (
+                  <div key={event._id} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col w-full">
+                    {event.image && event.image.asset ? (
+                      <div className="w-full h-48 relative">
+                        <Image
+                          src={getEventImageUrl(event.image)}
+                          alt={event.image.alt || event.name}
+                          fill
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-400">No Image</span>
+                      </div>
+                    )}
+                    <div className="flex flex-col p-6 flex-1 text-left">
+                      <h3 className="mb-2 font-semibold text-lg truncate">{event.name}</h3>
+                      <p className="text-gray-600 font-medium mb-1 truncate">{event.location}</p>
+                      <p className="text-gray-500 text-sm mb-2">{new Date(event.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                      <p className="text-gray-700 text-sm mb-4">{event.description.length > 150 ? event.description.slice(0, 150) + '…' : event.description}</p>
+                      <button
+                        className="mt-auto px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
+                        onClick={() => setModalEvent(event)}
+                      >
+                        View More
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           {/* Modal for event details */}
           {modalEvent && (
@@ -294,7 +309,7 @@ export default function Page() {
                 {modalEvent.image && modalEvent.image.asset && (
                   <div className="w-full h-56 relative mb-4 rounded">
                     <Image
-                      src={urlFor(modalEvent.image)}
+                      src={getEventImageUrl(modalEvent.image)}
                       alt={modalEvent.image.alt || modalEvent.name}
                       fill
                       className="object-cover w-full h-full rounded"
@@ -343,6 +358,11 @@ export default function Page() {
       {/* Ministry Dynamics */}
       <AnimatedSection>
         <MinistryDynamics ministries={homeData.ministries} isLoading={loading} />
+      </AnimatedSection>
+
+      {/* Leadership Team */}
+      <AnimatedSection>
+        <LeadershipTeam leaders={homeData.leadershipTeam || []} isLoading={loading} />
       </AnimatedSection>
 
       {/* Testimonials */}
