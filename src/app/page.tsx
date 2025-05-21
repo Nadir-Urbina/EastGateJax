@@ -62,6 +62,7 @@ export default function Page() {
     blogPosts: [],
   });
   const [loading, setLoading] = useState(true);
+  const [eventsLoading, setEventsLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [modalEvent, setModalEvent] = useState<Event | null>(null);
 
@@ -90,8 +91,15 @@ export default function Page() {
 
   useEffect(() => {
     async function loadEvents() {
-      const data = await fetchEvents();
-      setEvents(data || []);
+      setEventsLoading(true);
+      try {
+        const data = await fetchEvents();
+        setEvents(data || []);
+      } catch (error) {
+        console.error('Error loading events:', error);
+      } finally {
+        setEventsLoading(false);
+      }
     }
     loadEvents();
   }, []);
@@ -210,7 +218,22 @@ export default function Page() {
           <div className="container px-4">
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="mb-8 text-3xl font-bold">Join Us in Worship</h2>
-              {events.length === 0 ? (
+              {eventsLoading ? (
+                <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col animate-pulse">
+                      <div className="w-full h-48 bg-gray-200"></div>
+                      <div className="flex flex-col p-6 flex-1">
+                        <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
+                        <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                        <div className="h-8 bg-gray-200 rounded w-1/3 mt-auto"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : events.length === 0 ? (
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div className="rounded-lg bg-white p-6 shadow-sm">
                     <h3 className="mb-2 font-semibold">Sunday Service</h3>
@@ -319,12 +342,12 @@ export default function Page() {
 
       {/* Ministry Dynamics */}
       <AnimatedSection>
-        <MinistryDynamics ministries={homeData.ministries} />
+        <MinistryDynamics ministries={homeData.ministries} isLoading={loading} />
       </AnimatedSection>
 
       {/* Testimonials */}
       <AnimatedSection>
-        <Testimonials testimonials={homeData.testimonials} />
+        <Testimonials testimonials={homeData.testimonials} isLoading={loading} />
       </AnimatedSection>
 
       {/* Encounter Home Groups */}
@@ -334,12 +357,12 @@ export default function Page() {
 
       {/* Latest Sermons */}
       <AnimatedSection>
-        <LatestSermons sermons={homeData.sermons} />
+        <LatestSermons sermons={homeData.sermons} isLoading={loading} />
       </AnimatedSection>
 
       {/* Blog Preview */}
       <AnimatedSection>
-        <BlogPreview posts={homeData.blogPosts} />
+        <BlogPreview blogPosts={homeData.blogPosts} isLoading={loading} />
       </AnimatedSection>
 
       {/* Footer */}

@@ -8,6 +8,8 @@ import { urlForImage } from "@/lib/sanity/image";
 import { Metadata } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { projectId } from "@/lib/sanity/client";
+import { portableTextComponents } from "@/lib/sanity/portableText";
 
 interface BlogPostPageProps {
   params: {
@@ -15,7 +17,21 @@ interface BlogPostPageProps {
   };
 }
 
+// Fallback image for when post images are missing
+const FALLBACK_IMAGE = "/placeholder-image.png";
+
+// Hero image for posts that don't have their own featured image
+const HERO_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/newEGHeroimg-GJFwdnDP12Ycw5eU1ZnyDkZmTcGrKZ.png";
+
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  // Check if Sanity is properly configured
+  if (!projectId || projectId === 'placeholder-project-id') {
+    return {
+      title: "Blog - East Gate Kingdom Fellowship",
+      description: "Blog functionality requires Sanity configuration."
+    };
+  }
+  
   const post = await fetchBlogPost(params.slug);
   
   if (!post) {
@@ -28,50 +44,69 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   return {
     title: `${post.title} - East Gate Kingdom Fellowship Blog`,
     description: post.excerpt || "Read this blog post from East Gate Kingdom Fellowship",
-    openGraph: post.mainImage ? {
+    openGraph: post.mainImage && typeof post.mainImage === 'object' ? {
       images: [urlForImage(post.mainImage).url()],
     } : undefined,
   };
 }
 
-// Configure Portable Text components
-const components = {
-  types: {
-    image: ({ value }: any) => {
-      return (
-        <div className="my-8 rounded-lg overflow-hidden">
-          <Image 
-            src={urlForImage(value).url()} 
-            alt={value.alt || "Blog Image"} 
-            width={800} 
-            height={500}
-            className="w-full h-auto"
-          />
-          {value.caption && (
-            <div className="italic text-center text-gray-600 mt-2">{value.caption}</div>
-          )}
-        </div>
-      );
-    },
-  },
-  marks: {
-    link: ({ children, value }: any) => {
-      const rel = !value.href.startsWith("/") ? "noreferrer noopener" : undefined;
-      return (
-        <Link href={value.href} rel={rel} className="text-primary hover:underline">
-          {children}
-        </Link>
-      );
-    },
-  },
+/**
+ * Safely get image URL from Sanity image object
+ */
+const getSafeImageUrl = (image: any): string | null => {
+  if (!image) return null;
+  
+  try {
+    // Check if it's a valid Sanity image object with asset property
+    if (typeof image === 'object' && image !== null && image.asset) {
+      return urlForImage(image).url();
+    }
+    // If it's already a string URL
+    if (typeof image === 'string' && image.trim() !== '') {
+      return image;
+    }
+  } catch (error) {
+    console.error('Error processing image:', error);
+    return HERO_IMAGE; // Return the hero image as fallback
+  }
+  
+  return HERO_IMAGE; // Return the hero image if we can't process the provided image
 };
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  // Check if Sanity is properly configured
+  if (!projectId || projectId === 'placeholder-project-id') {
+    return (
+      <>
+        <Header />
+        <main>
+          <section className="py-16">
+            <div className="container px-4 mx-auto">
+              <div className="mx-auto max-w-3xl text-center">
+                <h1 className="text-3xl font-bold mb-4">Blog Configuration Required</h1>
+                <p className="text-gray-600 mb-8">
+                  The blog functionality requires Sanity CMS configuration. Please set the NEXT_PUBLIC_SANITY_PROJECT_ID environment variable.
+                </p>
+                <Link href="/blog" className="inline-block px-6 py-3 bg-primary text-white font-medium rounded-lg">
+                  Back to Blog
+                </Link>
+              </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+  
   const post = await fetchBlogPost(params.slug);
   
   if (!post) {
     notFound();
   }
+
+  // Get safe image URL
+  const imageUrl = getSafeImageUrl(post.mainImage);
 
   return (
     <>
@@ -80,17 +115,24 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Blog Post Header */}
         <section className="relative h-[400px] overflow-hidden">
           <div className="absolute inset-0 z-0">
-            {post.mainImage ? (
+            {imageUrl ? (
               <Image
-                src={urlForImage(post.mainImage).url()}
-                alt={post.title}
+                src={imageUrl}
+                alt={post.title || "Blog post"}
                 width={1920}
                 height={1080}
                 className="object-cover w-full h-full"
                 priority
               />
             ) : (
-              <div className="bg-gray-300 w-full h-full" />
+              <Image
+                src={HERO_IMAGE}
+                alt={post.title || "Blog post"}
+                width={1920}
+                height={1080}
+                className="object-cover w-full h-full"
+                priority
+              />
             )}
             <div className="absolute inset-0 bg-black/60" />
           </div>
@@ -121,7 +163,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className="mx-auto max-w-3xl">
               <article className="prose prose-lg max-w-none">
                 {post.body ? (
-                  <PortableText value={post.body} components={components} />
+                  <PortableText 
+                    value={post.body} 
+                    components={portableTextComponents}
+                  />
                 ) : (
                   <p>This blog post has no content yet.</p>
                 )}

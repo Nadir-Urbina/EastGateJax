@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity';
+import { defaultPortableText } from './parts/portableText';
 
 export default defineType({
   name: 'blogPost',
@@ -56,25 +57,7 @@ export default defineType({
     defineField({
       name: 'body',
       title: 'Body',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-        },
-        {
-          type: 'image',
-          fields: [
-            {
-              type: 'text',
-              name: 'alt',
-              title: 'Alternative text',
-              options: {
-                isHighlighted: true,
-              },
-            },
-          ],
-        },
-      ],
+      ...defaultPortableText,
     }),
   ],
   preview: {

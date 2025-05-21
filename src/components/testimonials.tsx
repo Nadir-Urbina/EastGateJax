@@ -6,29 +6,10 @@ import { PlaceholderImage } from './placeholder-image';
 
 interface TestimonialsProps {
   testimonials: TestimonialType[];
+  isLoading?: boolean;
 }
 
-export function Testimonials({ testimonials = [] }: TestimonialsProps) {
-  // If no testimonials data from Sanity yet, show placeholder testimonials
-  const displayTestimonials = testimonials.length > 0
-    ? testimonials
-    : [
-        {
-          _id: '1',
-          name: 'Church Member',
-          role: 'Church Member',
-          testimony: 'East Gate has been a place of spiritual growth and community for our family. The teachings are profound and the fellowship is genuine.',
-          image: null as any,
-        },
-        {
-          _id: '2',
-          name: 'Church Member',
-          role: 'Church Member',
-          testimony: 'The worship experience at East Gate is powerful and transformative. I\'ve found a true spiritual family here.',
-          image: null as any,
-        },
-      ];
-
+export function Testimonials({ testimonials = [], isLoading = false }: TestimonialsProps) {
   return (
     <section className="py-16">
       <div className="container px-4">
@@ -39,39 +20,65 @@ export function Testimonials({ testimonials = [] }: TestimonialsProps) {
           </p>
         </div>
         <div className="mx-auto max-w-4xl">
-          <div className="grid gap-8 md:grid-cols-2">
-            {displayTestimonials.map((testimonial) => (
-              <div key={testimonial._id} className="rounded-lg bg-white p-6 shadow-sm">
-                <div className="mb-4 flex items-center gap-4">
-                  <div className="h-12 w-12 overflow-hidden rounded-full bg-gray-100 relative">
-                    {testimonial.image && testimonial.image.asset ? (
-                      <Image
-                        src={getSanityImageUrl(testimonial.image)}
-                        alt={testimonial.name}
-                        width={48}
-                        height={48}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <PlaceholderImage
-                        width={48}
-                        height={48}
-                        alt="Testimonial"
-                        className="h-full w-full object-cover"
-                      />
-                    )}
+          {isLoading ? (
+            // Loading skeletons
+            <div className="grid gap-8 md:grid-cols-2">
+              {[1, 2].map((i) => (
+                <div key={i} className="rounded-lg bg-white p-6 shadow-sm animate-pulse">
+                  <div className="mb-4 flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-full bg-gray-200"></div>
+                    <div>
+                      <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-20"></div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
-                  </div>
+                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                 </div>
-                <p className="text-gray-600">
-                  "{testimonial.testimony}"
-                </p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : testimonials.length > 0 ? (
+            // Actual testimonials
+            <div className="grid gap-8 md:grid-cols-2">
+              {testimonials.map((testimonial) => (
+                <div key={testimonial._id} className="rounded-lg bg-white p-6 shadow-sm">
+                  <div className="mb-4 flex items-center gap-4">
+                    <div className="h-12 w-12 overflow-hidden rounded-full bg-gray-100 relative">
+                      {testimonial.image && testimonial.image.asset ? (
+                        <Image
+                          src={getSanityImageUrl(testimonial.image)}
+                          alt={testimonial.name}
+                          width={48}
+                          height={48}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <PlaceholderImage
+                          width={48}
+                          height={48}
+                          alt="Testimonial"
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold">{testimonial.name}</p>
+                      <p className="text-sm text-gray-600">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-600">
+                    "{testimonial.testimony}"
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            // Empty state
+            <div className="text-center py-8">
+              <p className="text-gray-500">No testimonials available yet.</p>
+            </div>
+          )}
         </div>
       </div>
     </section>

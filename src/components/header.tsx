@@ -56,7 +56,7 @@ export function Header() {
           <Link href="/blog" className="text-sm font-medium text-gray-300 hover:text-primary">
             Blog
           </Link>
-          <Link href="/donate" className="inline-flex h-10 items-center justify-center rounded-md bg-amber-400 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+          <Link href="https://give.tithe.ly/?formId=fc03799a-0541-44e4-91a9-d53c7f5fd9d3" target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center justify-center rounded-md bg-amber-400 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
             Donate
           </Link>
         </nav>
@@ -82,7 +82,7 @@ export function Header() {
               <Link href="/blog" className="text-sm font-medium hover:text-primary">
                 Blog
               </Link>
-              <Link href="/donate" className="inline-flex h-10 w-full items-center justify-center rounded-md bg-amber-400 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <Link href="https://give.tithe.ly/?formId=fc03799a-0541-44e4-91a9-d53c7f5fd9d3" target="_blank" rel="noopener noreferrer" className="inline-flex h-10 w-full items-center justify-center rounded-md bg-amber-400 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                 Donate
               </Link>
             </div>

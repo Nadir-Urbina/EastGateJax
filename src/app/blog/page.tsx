@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { projectId } from "@/lib/sanity/client";
+import { urlForImage } from "@/lib/sanity/image";
 
 export const metadata: Metadata = {
   title: "Blog - East Gate Kingdom Fellowship",
@@ -18,16 +20,25 @@ interface BlogPageProps {
 
 const POSTS_PER_PAGE = 9;
 
+// Hero image for the top of the blog page
+const HERO_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/newEGHeroimg-GJFwdnDP12Ycw5eU1ZnyDkZmTcGrKZ.png";
+
+// Fallback image for when post images are missing
+const FALLBACK_IMAGE = "/placeholder-image.png";
+
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const currentPage = Number(searchParams.page) || 1;
+  // Ensure searchParams is awaited properly before use
+  const pageParam = searchParams?.page ? await Promise.resolve(searchParams.page) : '1';
+  const currentPage = Number(pageParam) || 1;
   const start = (currentPage - 1) * POSTS_PER_PAGE;
   const end = start + POSTS_PER_PAGE - 1;
 
   const { posts, count } = await fetchBlogPosts(start, end);
   const totalPages = Math.ceil(count / POSTS_PER_PAGE);
 
-  // Default placeholder posts if there's no data from Sanity
-  const displayPosts = posts.length > 0 
+  // Show placeholder posts when Sanity configuration is missing or no posts are available
+  const isSanityConfigured = projectId && projectId !== 'placeholder-project-id';
+  const displayPosts = (isSanityConfigured && posts.length > 0) 
     ? posts 
     : Array.from({ length: 6 }, (_, i) => ({
         _id: `placeholder-${i}`,
@@ -52,7 +63,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         <section className="relative h-[300px] overflow-hidden">
           <div className="absolute inset-0 z-0">
             <Image
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/newEGHeroimg-GJFwdnDP12Ycw5eU1ZnyDkZmTcGrKZ.png"
+              src={HERO_IMAGE}
               alt="Church Community"
               width={1920}
               height={1080}
@@ -71,6 +82,25 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           </div>
         </section>
 
+        {/* Sanity Configuration Notice */}
+        {!isSanityConfigured && (
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-6 mx-4 sm:mx-auto sm:max-w-5xl">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-yellow-700">
+                  Sanity CMS configuration is required for the blog to display real content. 
+                  Please set the <code className="bg-yellow-100 px-1 rounded">NEXT_PUBLIC_SANITY_PROJECT_ID</code> environment variable.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Blog Posts */}
         <section className="py-16">
           <div className="container px-4 mx-auto">
@@ -80,12 +110,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   key={post._id} 
                   className="overflow-hidden rounded-lg shadow-sm border border-gray-100 transition-all hover:shadow-md"
                 >
-                  <Link href={`/blog/${post.slug.current}`}>
+                  <Link href={isSanityConfigured ? `/blog/${post.slug.current}` : '#'}>
                     <div className="relative h-48 overflow-hidden">
                       {post.mainImage ? (
                         <Image
-                          src={post.mainImage}
-                          alt={post.title}
+                          src={typeof post.mainImage === 'string' ? post.mainImage : urlForImage(post.mainImage).url()}
+                          alt={post.title || "Blog post image"}
                           width={600}
                           height={400}
                           className="object-cover w-full h-full transition-transform duration-500 hover:scale-105"
@@ -122,7 +152,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {isSanityConfigured && totalPages > 1 && (
               <div className="mt-16 flex justify-center">
                 <nav className="inline-flex rounded-md shadow-sm">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
