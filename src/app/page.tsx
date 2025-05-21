@@ -221,7 +221,7 @@ export default function Page() {
               {eventsLoading ? (
                 <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2">
                   {[1, 2].map((i) => (
-                    <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col animate-pulse">
+                    <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col animate-pulse w-full">
                       <div className="w-full h-48 bg-gray-200"></div>
                       <div className="flex flex-col p-6 flex-1">
                         <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -235,11 +235,11 @@ export default function Page() {
                 </div>
               ) : events.length === 0 ? (
                 <div className="grid gap-8 sm:grid-cols-2">
-                  <div className="rounded-lg bg-white p-6 shadow-sm">
+                  <div className="rounded-lg bg-white p-6 shadow-sm w-full">
                     <h3 className="mb-2 font-semibold">Sunday Service</h3>
                     <p className="text-gray-600">10:30 AM</p>
                   </div>
-                  <div className="rounded-lg bg-white p-6 shadow-sm">
+                  <div className="rounded-lg bg-white p-6 shadow-sm w-full">
                     <h3 className="mb-2 font-semibold">Wednesday Bible Study</h3>
                     <p className="text-gray-600">7:00 PM</p>
                   </div>
@@ -247,7 +247,7 @@ export default function Page() {
               ) : (
                 <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2">
                   {events.map(event => (
-                    <div key={event._id} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col">
+                    <div key={event._id} className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col w-full">
                       {event.image && event.image.asset ? (
                         <div className="w-full h-48 relative">
                           <Image

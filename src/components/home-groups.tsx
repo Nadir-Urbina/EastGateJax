@@ -117,12 +117,12 @@ export function HomeGroups({ homeGroups = [] }: HomeGroupsProps) {
         </div>
 
         {/* Home Groups - Horizontal Row */}
-        <div className="flex flex-row gap-8 overflow-x-auto pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {displayGroups.map(group => (
             <div
               key={group._id}
               className={
-                `flex flex-col bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 p-6 max-w-xs mx-auto cursor-pointer min-w-[320px] ${selectedGroupId === group._id ? 'ring-2 ring-primary' : ''}`
+                `flex flex-col bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 p-6 w-full cursor-pointer ${selectedGroupId === group._id ? 'ring-2 ring-primary' : ''}`
               }
               onClick={() => setSelectedGroupId(group._id)}
             >
