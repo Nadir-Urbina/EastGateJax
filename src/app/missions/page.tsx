@@ -6,6 +6,8 @@ import { getSanityImageUrl } from '@/lib/sanity/client';
 import { formatDate } from '@/lib/utils';
 import { PlaceholderImage } from '@/components/placeholder-image';
 import { Footer } from '@/components/footer';
+import { Header } from '@/components/header';
+import { projectId } from '@/lib/sanity/client';
 
 export const metadata = {
   title: 'Missions | East Gate Kingdom Fellowship',
@@ -13,7 +15,14 @@ export const metadata = {
 };
 
 export default async function MissionsPage() {
-  const missions = await fetchMissions();
+  // Check if Sanity is configured properly before fetching data
+  const isSanityConfigured = projectId && projectId !== 'placeholder-project-id';
+  
+  // Only fetch data if Sanity is properly configured
+  const missionsData = isSanityConfigured ? await fetchMissions() : [];
+  
+  // Safely handle the case where missions might be null
+  const missions = missionsData || [];
   
   // If no missions data from Sanity yet, show placeholder missions
   const displayMissions = missions.length > 0
@@ -59,6 +68,9 @@ export default async function MissionsPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Header */}
+      <Header />
+      
       {/* Hero Section */}
       <section className="relative py-24 bg-gray-900">
         <div className="absolute inset-0 z-0 opacity-30">
@@ -84,6 +96,25 @@ export default async function MissionsPage() {
       {/* Mission Statement */}
       <section className="py-16">
         <div className="container px-4 mx-auto">
+          {/* Sanity Configuration Notice */}
+          {!isSanityConfigured && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-6 mx-4 sm:mx-auto sm:max-w-5xl">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-yellow-700">
+                    Sanity CMS configuration is required to display real mission data. 
+                    Please set the <code className="bg-yellow-100 px-1 rounded">NEXT_PUBLIC_SANITY_PROJECT_ID</code> environment variable.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="mb-8 text-3xl font-bold">Our Mission Focus</h2>
             <p className="mb-6 text-lg text-gray-700">
@@ -200,7 +231,9 @@ export default async function MissionsPage() {
                 Support our mission work financially. Your gifts make a significant impact.
               </p>
               <Link
-                href="/donate"
+                href="https://give.tithe.ly/?formId=fc03799a-0541-44e4-91a9-d53c7f5fd9d3"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-primary hover:underline"
               >
                 Donate Now

@@ -1,6 +1,11 @@
-import { client } from './client';
+import { client, projectId } from './client';
 
 export async function fetchSanityData(query: string, params?: any) {
+  // If Sanity is not properly configured, return null immediately
+  if (!projectId || projectId === 'placeholder-project-id') {
+    return null;
+  }
+  
   try {
     const data = await client.fetch(query, params);
     return data;

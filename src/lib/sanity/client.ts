@@ -27,7 +27,7 @@ export function urlFor(source: any) {
 
 export function getSanityImageUrl(image: any) {
   if (!image || !image.asset) {
-    return '';
+    return '/placeholder-image.png';
   }
   return urlFor(image).url();
 } 
