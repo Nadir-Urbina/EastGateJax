@@ -9,6 +9,13 @@ interface LatestSermonsProps {
   sermons: Sermon[];
 }
 
+function extractYouTubeId(url: string): string | null {
+  const match = url.match(
+    /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([\w-]{11})/
+  );
+  return match ? match[1] : null;
+}
+
 export function LatestSermons({ sermons = [] }: LatestSermonsProps) {
   // If no sermons data from Sanity yet, show placeholder sermons
   const displaySermons = sermons.length > 0
@@ -53,7 +60,10 @@ export function LatestSermons({ sermons = [] }: LatestSermonsProps) {
           {displaySermons.map((sermon) => (
             <div key={sermon._id} className="flex flex-col rounded-lg bg-white shadow-sm overflow-hidden">
               <div className="aspect-video relative">
-                <YoutubeEmbed url={sermon.youtubeUrl} />
+                <YoutubeEmbed
+                  videoId={extractYouTubeId(sermon.youtubeUrl) || ''}
+                  title={sermon.title}
+                />
               </div>
               <div className="p-6 flex-grow">
                 <h3 className="mb-2 text-xl font-semibold">{sermon.title}</h3>

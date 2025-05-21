@@ -16,15 +16,17 @@ export async function fetchHomeData() {
     ministryDynamicsQuery, 
     testimonialsQuery, 
     sermonsQuery, 
-    recentBlogPostsQuery 
+    recentBlogPostsQuery,
+    homeGroupsQuery
   } = await import('./queries');
 
   try {
-    const [ministries, testimonials, sermons, blogPosts] = await Promise.all([
+    const [ministries, testimonials, sermons, blogPosts, homeGroups] = await Promise.all([
       fetchSanityData(ministryDynamicsQuery),
       fetchSanityData(testimonialsQuery),
       fetchSanityData(sermonsQuery),
       fetchSanityData(recentBlogPostsQuery),
+      fetchSanityData(homeGroupsQuery),
     ]);
 
     return {
@@ -32,6 +34,7 @@ export async function fetchHomeData() {
       testimonials: testimonials || [],
       sermons: sermons || [],
       blogPosts: blogPosts || [],
+      homeGroups: homeGroups || [],
     };
   } catch (error) {
     console.error('Error fetching home page data:', error);
@@ -40,6 +43,7 @@ export async function fetchHomeData() {
       testimonials: [],
       sermons: [],
       blogPosts: [],
+      homeGroups: [],
     };
   }
 }
@@ -84,4 +88,9 @@ export async function fetchBlogPost(slug: string) {
 export async function fetchMinistryDetail(slug: string) {
   const { singleMinistryQuery } = await import('./queries');
   return fetchSanityData(singleMinistryQuery, { slug }) || null;
+}
+
+export async function fetchEvents() {
+  const { eventsQuery } = await import('./queries');
+  return fetchSanityData(eventsQuery) || [];
 } 

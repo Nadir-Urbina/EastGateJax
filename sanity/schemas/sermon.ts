@@ -42,6 +42,7 @@ export default defineType({
       name: 'youtubeUrl',
       title: 'YouTube URL',
       type: 'url',
+      validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
     }),
     defineField({
       name: 'image',

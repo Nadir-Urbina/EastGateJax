@@ -59,20 +59,18 @@ export default defineType({
       validation: (Rule) => Rule.required()
     }),
     defineField({
-      name: 'location',
-      title: 'Location',
+      name: 'county',
+      title: 'County',
       type: 'string',
-      validation: (Rule) => Rule.required()
+      description: 'County or general area for the group (displayed publicly).',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'coordinates',
-      title: 'Map Coordinates',
-      type: 'geopoint',
-      description: 'Click on the map to set the location or search for an address. This will be used to display the group on the map.',
-      validation: (Rule) => Rule.required().error('Location coordinates are required for the map display'),
-      components: {
-        field: GeopointHelper
-      }
+      name: 'locationZip',
+      title: 'Location Zip Code',
+      type: 'string',
+      description: 'Only the zip code will be shown publicly for privacy.',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'leaders',
@@ -106,7 +104,7 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
-      subtitle: 'location',
+      subtitle: 'county',
       media: 'image',
     },
   },

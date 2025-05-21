@@ -45,19 +45,14 @@ export interface HomeGroup {
   title: string;
   slug?: SanitySlug;
   description?: string;
-  location: string;
+  county: string;
+  locationZip: string;
   meetingDay: string;
   meetingTime: string;
   ageGroup: string;
   leaders: string;
   contactEmail?: string;
   contactPhone?: string;
-  coordinates: {
-    _type: 'geopoint';
-    lat: number;
-    lng: number;
-    alt?: number;
-  };
   image?: SanityImage;
 }
 
@@ -118,12 +113,14 @@ export interface Mission {
 // Event (could be used within ministries)
 export interface Event {
   _id: string;
-  title: string;
-  description?: string;
+  name: string;
   date: string;
-  time?: string;
-  location?: string;
-  image?: SanityImage;
+  description: string;
+  location: string;
+  image?: {
+    asset: { _ref: string; _type: string };
+    alt?: string;
+  };
 }
 
 // Home Page Data

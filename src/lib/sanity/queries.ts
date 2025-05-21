@@ -24,14 +24,14 @@ export const homeGroupsQuery = `*[_type == "homeGroup"] {
   title,
   slug,
   description,
-  location,
+  county,
+  locationZip,
   meetingDay,
   meetingTime,
   ageGroup,
   leaders,
   contactEmail,
   contactPhone,
-  coordinates,
   image
 }`;
 
@@ -117,4 +117,14 @@ export const categoriesQuery = `*[_type == "category"] {
   _id,
   title,
   description
+}`;
+
+// Events
+export const eventsQuery = `*[_type == "event" && date >= now()] | order(date asc) {
+  _id,
+  name,
+  date,
+  description,
+  location,
+  image
 }`; 

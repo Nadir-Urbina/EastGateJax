@@ -17,12 +17,16 @@ interface InteractiveMapProps {
   markers?: MapMarker[];
   center?: [number, number]; // [longitude, latitude]
   zoom?: number;
+  selectedId?: string | null;
+  onSelectMarker?: (id: string) => void;
 }
 
 export function InteractiveMap({ 
   markers = [], 
   center = [-81.5514, 30.246], 
-  zoom = 9 
+  zoom = 9,
+  selectedId = null,
+  onSelectMarker,
 }: InteractiveMapProps) {
   const mapContainer = useRef<HTMLDivElement | null>(null)
   const map = useRef<mapboxgl.Map | null>(null)
@@ -44,14 +48,23 @@ export function InteractiveMap({
         zoom: zoom,
       })
 
+      if (selectedId) {
+        const marker = markers.find(m => m.id === selectedId);
+        if (marker) {
+          map.current.flyTo({ center: marker.position, zoom: 12 });
+        }
+      } else {
+        map.current.flyTo({ center, zoom });
+      }
+
       map.current.on("load", () => {
         // Add markers when map loads
         markers.forEach((marker) => {
           const el = document.createElement('div');
           el.className = 'marker';
-          el.style.backgroundColor = '#FF0000';
-          el.style.width = '20px';
-          el.style.height = '20px';
+          el.style.backgroundColor = marker.id === selectedId ? '#000' : '#FF0000';
+          el.style.width = marker.id === selectedId ? '28px' : '20px';
+          el.style.height = marker.id === selectedId ? '28px' : '20px';
           el.style.borderRadius = '50%';
           el.style.cursor = 'pointer';
           
@@ -61,6 +74,7 @@ export function InteractiveMap({
 
           mapMarker.getElement().addEventListener("click", () => {
             setSelectedMarker(marker)
+            if (onSelectMarker) onSelectMarker(marker.id)
           })
         })
       })
@@ -73,7 +87,7 @@ export function InteractiveMap({
       setMapError("Failed to initialize the map")
       console.error("Map initialization error:", error)
     }
-  }, [markers, center, zoom])
+  }, [selectedId, center, zoom, markers, onSelectMarker])
 
   if (mapError) {
     return (
