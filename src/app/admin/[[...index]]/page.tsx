@@ -14,6 +14,24 @@ export default function AdminPage() {
       setIsLoading(false);
     }, 1000);
     
+    // Suppress known Sanity Studio DOM nesting warnings in development
+    if (process.env.NODE_ENV === 'development') {
+      const originalError = console.error;
+      console.error = (...args: any[]) => {
+        const message = args[0]?.toString() || '';
+        // Filter out specific DOM nesting warnings that don't affect functionality
+        if (
+          message.includes('cannot be a descendant of <p>') ||
+          message.includes('<p> cannot contain a nested <div>') ||
+          message.includes('validateDOMNesting') ||
+          message.includes('This will cause a hydration error')
+        ) {
+          return; // Skip these specific warnings
+        }
+        originalError.apply(console, args);
+      };
+    }
+    
     return () => clearTimeout(timer);
   }, []);
 

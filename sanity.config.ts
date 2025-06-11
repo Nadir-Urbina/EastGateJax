@@ -4,6 +4,7 @@ import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './sanity/schemas';
 import { mapboxPlugin } from './sanity/plugins/mapbox';
 import { customImageAsset } from './sanity/plugins/customImageAsset';
+import React from 'react';
 
 export default defineConfig({
   name: 'default',

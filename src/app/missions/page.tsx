@@ -14,6 +14,19 @@ export const metadata = {
   description: 'Current and upcoming mission work at East Gate Kingdom Fellowship in Costa Rica, Australia, New Zealand, and beyond.',
 };
 
+interface Mission {
+  _id: string;
+  title: string;
+  description: string;
+  location: string;
+  startDate: string;
+  ongoing: boolean;
+  image: any;
+  contactPerson: string;
+  donationLink?: string;
+  order: number;
+}
+
 export default async function MissionsPage() {
   // Check if Sanity is configured properly before fetching data
   const isSanityConfigured = projectId && projectId !== 'placeholder-project-id';
@@ -148,7 +161,7 @@ export default async function MissionsPage() {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayMissions.map((mission) => (
+            {displayMissions.map((mission: Mission) => (
               <div
                 key={mission._id}
                 className="overflow-hidden bg-white rounded-lg shadow-sm"

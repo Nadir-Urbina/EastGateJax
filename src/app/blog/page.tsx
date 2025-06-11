@@ -6,8 +6,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { projectId } from "@/lib/sanity/client";
-import { urlForImage } from "@/lib/sanity/image";
+import { projectId, getSanityImageSrcFromRef } from "@/lib/sanity/client";
 
 export const metadata: Metadata = {
   title: "Blog - East Gate Kingdom Fellowship",
@@ -26,19 +25,26 @@ const HERO_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/newE
 // Fallback image for when post images are missing
 const FALLBACK_IMAGE = "/placeholder-image.png";
 
+// Helper function for blog post image URLs (similar to main page approach)
+function getBlogImageUrl(image: any) {
+  if (!image || !image.asset || !image.asset._ref) return '';
+  return getSanityImageSrcFromRef(image.asset._ref);
+}
+
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-  // Ensure searchParams is awaited properly before use
-  const pageParam = searchParams?.page ? await Promise.resolve(searchParams.page) : '1';
+  // Await searchParams before accessing its properties
+  const resolvedSearchParams = await searchParams;
+  const pageParam = resolvedSearchParams?.page || '1';
   const currentPage = Number(pageParam) || 1;
   const start = (currentPage - 1) * POSTS_PER_PAGE;
   const end = start + POSTS_PER_PAGE - 1;
 
   const { posts, count } = await fetchBlogPosts(start, end);
-  const totalPages = Math.ceil(count / POSTS_PER_PAGE);
+  const totalPages = Math.ceil((count || 0) / POSTS_PER_PAGE);
 
   // Show placeholder posts when Sanity configuration is missing or no posts are available
   const isSanityConfigured = projectId && projectId !== 'placeholder-project-id';
-  const displayPosts = (isSanityConfigured && posts.length > 0) 
+  const displayPosts = (isSanityConfigured && posts && posts.length > 0) 
     ? posts 
     : Array.from({ length: 6 }, (_, i) => ({
         _id: `placeholder-${i}`,
@@ -112,9 +118,9 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                 >
                   <Link href={isSanityConfigured ? `/blog/${post.slug.current}` : '#'}>
                     <div className="relative h-48 overflow-hidden">
-                      {post.mainImage ? (
+                      {post.mainImage && getBlogImageUrl(post.mainImage) ? (
                         <Image
-                          src={typeof post.mainImage === 'string' ? post.mainImage : urlForImage(post.mainImage).url()}
+                          src={getBlogImageUrl(post.mainImage)}
                           alt={post.title || "Blog post image"}
                           width={600}
                           height={400}

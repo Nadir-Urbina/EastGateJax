@@ -61,6 +61,8 @@ module.exports = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
+        montserrat: ["var(--font-montserrat)", ...fontFamily.sans],
+        playfair: ["var(--font-playfair)", ...fontFamily.serif],
       },
       keyframes: {
         "accordion-down": {

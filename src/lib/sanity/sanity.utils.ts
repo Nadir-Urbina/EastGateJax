@@ -49,19 +49,52 @@ export const fetchSermons = cache(async (limit?: number): Promise<Sermon[]> => {
   );
 });
 
-export const fetchBlogPosts = cache(async (limit?: number): Promise<BlogPost[]> => {
-  return client.fetch(
-    `*[_type == "blogPost"] | order(publishedAt desc) ${limit ? `[0...${limit}]` : ''} {
-      _id,
-      title,
-      slug,
-      publishedAt,
-      mainImage,
-      excerpt,
-      "categories": categories[]->{ _id, title },
-      "author": author->{ _id, name, image }
-    }`
-  );
+export const fetchBlogPosts = cache(async (start?: number, end?: number): Promise<{ posts: BlogPost[], count: number }> => {
+  try {
+    // If start and end are provided, use pagination; otherwise, fetch all posts with optional limit
+    const isUsingPagination = start !== undefined && end !== undefined;
+    
+    if (isUsingPagination) {
+      // Fetch posts with pagination
+      const posts = await client.fetch(
+        `*[_type == "blogPost"] | order(publishedAt desc) [${start}...${end + 1}] {
+          _id,
+          title,
+          slug,
+          publishedAt,
+          mainImage,
+          excerpt,
+          "categories": categories[]->{ _id, title },
+          "author": author->{ _id, name, image }
+        }`
+      );
+      
+      // Fetch total count
+      const count = await client.fetch(`count(*[_type == "blogPost"])`);
+      
+      return { posts: posts || [], count: count || 0 };
+    } else {
+      // Legacy behavior for backwards compatibility - treat start as limit
+      const limit = start;
+      const posts = await client.fetch(
+        `*[_type == "blogPost"] | order(publishedAt desc) ${limit ? `[0...${limit}]` : ''} {
+          _id,
+          title,
+          slug,
+          publishedAt,
+          mainImage,
+          excerpt,
+          "categories": categories[]->{ _id, title },
+          "author": author->{ _id, name, image }
+        }`
+      );
+      
+      return { posts: posts || [], count: posts?.length || 0 };
+    }
+  } catch (error) {
+    console.error('Error fetching blog posts:', error);
+    return { posts: [], count: 0 };
+  }
 });
 
 export const fetchHomeGroups = cache(async (): Promise<HomeGroup[]> => {
@@ -110,8 +143,8 @@ export const fetchLeadershipTeam = cache(async (): Promise<LeadershipTeam[]> => 
 
 export async function fetchSanityData(query: string, params?: any) {
   // If Sanity is not properly configured, return null immediately
-  if (!client.projectId) {
-    console.error('Sanity project ID is not configured');
+  const config = client.config();
+  if (!config.projectId || config.projectId === 'placeholder-project-id') {
     return null;
   }
   
@@ -214,16 +247,34 @@ export async function fetchHomeData() {
 }
 
 export async function fetchMissions() {
+  // Check if Sanity is properly configured before attempting to fetch
+  const config = client.config();
+  if (!config.projectId || config.projectId === 'placeholder-project-id') {
+    return [];
+  }
+  
   const { missionsQuery } = await import('./queries');
   return fetchSanityData(missionsQuery) || [];
 }
 
 export async function fetchBlogPost(slug: string) {
+  // Check if Sanity is properly configured before attempting to fetch
+  const config = client.config();
+  if (!config.projectId || config.projectId === 'placeholder-project-id') {
+    return null;
+  }
+  
   const { singleBlogPostQuery } = await import('./queries');
   return fetchSanityData(singleBlogPostQuery, { slug }) || null;
 }
 
 export async function fetchMinistryDetail(slug: string) {
+  // Check if Sanity is properly configured before attempting to fetch
+  const config = client.config();
+  if (!config.projectId || config.projectId === 'placeholder-project-id') {
+    return null;
+  }
+  
   const { singleMinistryQuery } = await import('./queries');
   return fetchSanityData(singleMinistryQuery, { slug }) || null;
 } 

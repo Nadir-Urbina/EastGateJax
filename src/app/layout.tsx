@@ -1,8 +1,10 @@
 import type React from "react"
 import "./globals.css"
-import { Inter } from "next/font/google"
+import { Inter, Montserrat, Playfair_Display } from "next/font/google"
 
 const inter = Inter({ subsets: ["latin"] })
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" })
+const playfairDisplay = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" })
 
 export const metadata = {
   title: "East Gate Kingdom Fellowship",
@@ -22,7 +24,7 @@ export default function RootLayout({
       <head>
         {mapboxToken && <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css" rel="stylesheet" />}
       </head>
-      <body className={inter.className} suppressHydrationWarning={true}>
+      <body className={`${inter.className} ${montserrat.variable} ${playfairDisplay.variable}`} suppressHydrationWarning={true}>
           {children}
       </body>
     </html>

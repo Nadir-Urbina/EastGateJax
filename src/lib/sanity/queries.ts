@@ -88,7 +88,11 @@ export const singleBlogPostQuery = `*[_type == "blogPost" && slug.current == $sl
   title,
   slug,
   mainImage,
-  body
+  body,
+  publishedAt,
+  excerpt,
+  "author": author->name,
+  "categories": categories[]->title
 }`;
 
 export const missionsQuery = `*[_type == "mission"] {

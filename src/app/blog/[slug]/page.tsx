@@ -4,11 +4,10 @@ import { fetchBlogPost } from "@/lib/sanity/sanity.utils";
 import { formatDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { PortableText } from "@portabletext/react";
-import { urlForImage } from "@/lib/sanity/image";
 import { Metadata } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { projectId } from "@/lib/sanity/client";
+import { projectId, getSanityImageSrcFromRef } from "@/lib/sanity/client";
 import { portableTextComponents } from "@/lib/sanity/portableText";
 
 interface BlogPostPageProps {
@@ -23,7 +22,16 @@ const FALLBACK_IMAGE = "/placeholder-image.png";
 // Hero image for posts that don't have their own featured image
 const HERO_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/newEGHeroimg-GJFwdnDP12Ycw5eU1ZnyDkZmTcGrKZ.png";
 
+// Helper function for blog post image URLs (consistent with blog listing page)
+function getBlogImageUrl(image: any) {
+  if (!image || !image.asset || !image.asset._ref) return '';
+  return getSanityImageSrcFromRef(image.asset._ref);
+}
+
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  // Await params before accessing its properties
+  const { slug } = await params;
+  
   // Check if Sanity is properly configured
   if (!projectId || projectId === 'placeholder-project-id') {
     return {
@@ -32,7 +40,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
   
-  const post = await fetchBlogPost(params.slug);
+  const post = await fetchBlogPost(slug);
   
   if (!post) {
     return {
@@ -41,11 +49,13 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
   
+  const imageUrl = getBlogImageUrl(post.mainImage);
+  
   return {
     title: `${post.title} - East Gate Kingdom Fellowship Blog`,
     description: post.excerpt || "Read this blog post from East Gate Kingdom Fellowship",
-    openGraph: post.mainImage && typeof post.mainImage === 'object' ? {
-      images: [urlForImage(post.mainImage).url()],
+    openGraph: imageUrl ? {
+      images: [imageUrl],
     } : undefined,
   };
 }
@@ -53,27 +63,15 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 /**
  * Safely get image URL from Sanity image object
  */
-const getSafeImageUrl = (image: any): string | null => {
-  if (!image) return null;
-  
-  try {
-    // Check if it's a valid Sanity image object with asset property
-    if (typeof image === 'object' && image !== null && image.asset) {
-      return urlForImage(image).url();
-    }
-    // If it's already a string URL
-    if (typeof image === 'string' && image.trim() !== '') {
-      return image;
-    }
-  } catch (error) {
-    console.error('Error processing image:', error);
-    return HERO_IMAGE; // Return the hero image as fallback
-  }
-  
-  return HERO_IMAGE; // Return the hero image if we can't process the provided image
+const getSafeImageUrl = (image: any): string => {
+  const imageUrl = getBlogImageUrl(image);
+  return imageUrl || HERO_IMAGE;
 };
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  // Await params before accessing its properties
+  const { slug } = await params;
+  
   // Check if Sanity is properly configured
   if (!projectId || projectId === 'placeholder-project-id') {
     return (
@@ -99,7 +97,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     );
   }
   
-  const post = await fetchBlogPost(params.slug);
+  const post = await fetchBlogPost(slug);
   
   if (!post) {
     notFound();
@@ -115,25 +113,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* Blog Post Header */}
         <section className="relative h-[400px] overflow-hidden">
           <div className="absolute inset-0 z-0">
-            {imageUrl ? (
-              <Image
-                src={imageUrl}
-                alt={post.title || "Blog post"}
-                width={1920}
-                height={1080}
-                className="object-cover w-full h-full"
-                priority
-              />
-            ) : (
-              <Image
-                src={HERO_IMAGE}
-                alt={post.title || "Blog post"}
-                width={1920}
-                height={1080}
-                className="object-cover w-full h-full"
-                priority
-              />
-            )}
+            <Image
+              src={imageUrl}
+              alt={post.title || "Blog post"}
+              width={1920}
+              height={1080}
+              className="object-cover w-full h-full"
+              priority
+            />
             <div className="absolute inset-0 bg-black/60" />
           </div>
           <div className="container relative z-10 flex h-full items-center px-4">
@@ -204,7 +191,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Categories</h3>
                       <div className="flex flex-wrap gap-2">
-                        {post.categories.map((category) => (
+                        {post.categories.map((category: string) => (
                           <Link
                             key={category}
                             href={`/blog?category=${encodeURIComponent(category)}`}

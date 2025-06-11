@@ -204,9 +204,9 @@ export default function Page() {
         </div>
         <div className="container relative z-10 flex h-full items-center justify-center px-4">
           <div className="max-w-3xl text-center text-white">
-            <h1 className="mb-6 text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
-              East Gate Kingdom Fellowship
-            </h1>
+                          <h1 className="mb-6 text-5xl font-bold leading-tight sm:text-6xl md:text-7xl lg:text-8xl font-playfair text-white drop-shadow-2xl shadow-black/50 [text-shadow:_3px_3px_12px_rgb(0_0_0_/_80%)] tracking-wide">
+                EAST GATE
+              </h1>
             <p className="mb-8 text-lg font-medium italic text-gray-200">
               The King Is Here
             </p>

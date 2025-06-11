@@ -1,54 +1,36 @@
-import createImageUrlBuilder from '@sanity/image-url';
-import { client } from './client';
+import { getSanityImageSrcFromRef } from './client';
 
 // Fallback image for placeholder or error cases (use a local file for reliability)
 const PLACEHOLDER_IMAGE = '/placeholder-image.png';
 
-// Create a dummy image URL builder that returns placeholders for all methods
-const createPlaceholderBuilder = (fallbackUrl = PLACEHOLDER_IMAGE) => {
-  const fallbackBuilder = {
-    width: () => fallbackBuilder,
-    height: () => fallbackBuilder,
-    quality: () => fallbackBuilder,
-    auto: () => fallbackBuilder,
-    format: () => fallbackBuilder,
-    crop: () => fallbackBuilder,
-    fit: () => fallbackBuilder,
-    url: () => fallbackUrl,
-  };
-  return fallbackBuilder;
-};
-
-// Initialize the Sanity image builder
-const imageBuilder = createImageUrlBuilder(client);
-
 /**
- * Get a URL builder for a Sanity image, with graceful fallbacks
+ * Get a URL for a Sanity image, with graceful fallbacks
  * @param source The Sanity image object
- * @returns An image URL builder instance that can chain methods
+ * @returns A simple URL string (not a builder)
  */
 export const urlForImage = (source: any) => {
   // Safety check for source validity
   if (!source) {
-    return createPlaceholderBuilder();
+    return { url: () => PLACEHOLDER_IMAGE };
   }
 
-  // If source is already a string URL, return a builder that just returns this URL
+  // If source is already a string URL
   if (typeof source === 'string') {
-    return createPlaceholderBuilder(source);
+    return { url: () => source };
   }
 
   try {
     // For Sanity image objects
     if (typeof source === 'object' && source !== null) {
       // Check if it has the expected Sanity image structure with asset
-      if (source.asset && typeof source.asset === 'object') {
-        return imageBuilder.image(source);
+      if (source.asset && source.asset._ref) {
+        const imageUrl = getSanityImageSrcFromRef(source.asset._ref);
+        return { url: () => imageUrl || PLACEHOLDER_IMAGE };
       }
       
       // If it has a URL property (some APIs return this format)
       if (source.url && typeof source.url === 'string') {
-        return createPlaceholderBuilder(source.url);
+        return { url: () => source.url };
       }
     }
   } catch (error) {
@@ -56,5 +38,5 @@ export const urlForImage = (source: any) => {
   }
   
   // Default fallback
-  return createPlaceholderBuilder();
+  return { url: () => PLACEHOLDER_IMAGE };
 }; 
