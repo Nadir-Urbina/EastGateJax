@@ -74,32 +74,63 @@ const getEventStatus = (dateString?: string) => {
 };
 
 export function EventCard({ event, isPast = false }: EventCardProps) {
-  const [likes, setLikes] = useState(0);
+  const [likes, setLikes] = useState(event.likes || 0);
   const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
-  // Load likes from localStorage on component mount
+  // Load user's like status from localStorage on component mount
   useEffect(() => {
-    const storedLikes = localStorage.getItem(`event-likes-${event._id}`);
     const storedIsLiked = localStorage.getItem(`event-liked-${event._id}`);
-    
-    if (storedLikes) {
-      setLikes(parseInt(storedLikes, 10));
-    }
     if (storedIsLiked) {
       setIsLiked(storedIsLiked === 'true');
     }
+    
+    // Clean up old localStorage data from previous implementation
+    const oldLikesKey = `event-likes-${event._id}`;
+    if (localStorage.getItem(oldLikesKey)) {
+      localStorage.removeItem(oldLikesKey);
+    }
   }, [event._id]);
 
-  const handleLike = () => {
+  // Update likes when event data changes
+  useEffect(() => {
+    setLikes(event.likes || 0);
+  }, [event.likes]);
+
+  const handleLike = async () => {
+    if (isLoading) return; // Prevent multiple requests
+    
+    setIsLoading(true);
     const newIsLiked = !isLiked;
-    const newLikes = newIsLiked ? likes + 1 : Math.max(0, likes - 1);
     
-    setIsLiked(newIsLiked);
-    setLikes(newLikes);
-    
-    // Store in localStorage
-    localStorage.setItem(`event-likes-${event._id}`, newLikes.toString());
-    localStorage.setItem(`event-liked-${event._id}`, newIsLiked.toString());
+    try {
+      const method = newIsLiked ? 'POST' : 'DELETE';
+      const response = await fetch(`/api/events/${event._id}/like`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update like');
+      }
+
+      const data = await response.json();
+      
+      // Update local state
+      setIsLiked(newIsLiked);
+      setLikes(data.likes);
+      
+      // Store user's like status in localStorage (for UI state only)
+      localStorage.setItem(`event-liked-${event._id}`, newIsLiked.toString());
+      
+    } catch (error) {
+      console.error('Error updating like:', error);
+      // Could add a toast notification here for better UX
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const { date, time, dayOfWeek } = formatEventDateTime(event.date);
@@ -136,14 +167,15 @@ export function EventCard({ event, isPast = false }: EventCardProps) {
           <div className="flex justify-between items-center">
             <button
               onClick={handleLike}
-              className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm transition-colors ${
+              disabled={isLoading}
+              className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                 isLiked 
                   ? 'bg-red-100 text-red-600 hover:bg-red-200' 
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
               <Heart 
-                className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} 
+                className={`w-4 h-4 ${isLiked ? 'fill-current' : ''} ${isLoading ? 'animate-pulse' : ''}`} 
               />
               <span>{likes}</span>
             </button>
@@ -206,14 +238,15 @@ export function EventCard({ event, isPast = false }: EventCardProps) {
         <div className="flex justify-between items-center">
           <button
             onClick={handleLike}
-            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-colors ${
+            disabled={isLoading}
+            className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
               isLiked 
                 ? 'bg-red-100 text-red-600 hover:bg-red-200' 
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             <Heart 
-              className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} 
+              className={`w-4 h-4 ${isLiked ? 'fill-current' : ''} ${isLoading ? 'animate-pulse' : ''}`} 
             />
             <span>{likes}</span>
           </button>

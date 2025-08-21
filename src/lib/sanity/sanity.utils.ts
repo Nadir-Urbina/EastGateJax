@@ -12,7 +12,7 @@ export const client = createClient({
 
 export const fetchMinistryDynamics = cache(async (): Promise<MinistryDynamic[]> => {
   return client.fetch(
-    `*[_type == "ministryDynamic"] | order(order asc) {
+    `*[_type == "ministryDynamic" && !(_id in path("drafts.**"))] | order(order asc) {
       _id,
       title,
       description,
@@ -26,7 +26,7 @@ export const fetchMinistryDynamics = cache(async (): Promise<MinistryDynamic[]> 
 
 export const fetchTestimonials = cache(async (): Promise<Testimonial[]> => {
   return client.fetch(
-    `*[_type == "testimonial"] {
+    `*[_type == "testimonial" && !(_id in path("drafts.**"))] {
       _id,
       name,
       role,
@@ -38,7 +38,7 @@ export const fetchTestimonials = cache(async (): Promise<Testimonial[]> => {
 
 export const fetchSermons = cache(async (limit?: number): Promise<Sermon[]> => {
   return client.fetch(
-    `*[_type == "sermon"] | order(date desc) ${limit ? `[0...${limit}]` : ''} {
+    `*[_type == "sermon" && !(_id in path("drafts.**"))] | order(date desc) ${limit ? `[0...${limit}]` : ''} {
       _id,
       title,
       description,
@@ -58,7 +58,7 @@ export const fetchBlogPosts = cache(async (start?: number, end?: number): Promis
     if (isUsingPagination) {
       // Fetch posts with pagination
       const posts = await client.fetch(
-        `*[_type == "blogPost"] | order(publishedAt desc) [${start}...${end + 1}] {
+        `*[_type == "blogPost" && !(_id in path("drafts.**"))] | order(publishedAt desc) [${start}...${end + 1}] {
           _id,
           title,
           slug,
@@ -71,14 +71,14 @@ export const fetchBlogPosts = cache(async (start?: number, end?: number): Promis
       );
       
       // Fetch total count
-      const count = await client.fetch(`count(*[_type == "blogPost"])`);
+      const count = await client.fetch(`count(*[_type == "blogPost" && !(_id in path("drafts.**"))])`);
       
       return { posts: posts || [], count: count || 0 };
     } else {
       // Legacy behavior for backwards compatibility - treat start as limit
       const limit = start;
       const posts = await client.fetch(
-        `*[_type == "blogPost"] | order(publishedAt desc) ${limit ? `[0...${limit}]` : ''} {
+        `*[_type == "blogPost" && !(_id in path("drafts.**"))] | order(publishedAt desc) ${limit ? `[0...${limit}]` : ''} {
           _id,
           title,
           slug,
@@ -100,7 +100,7 @@ export const fetchBlogPosts = cache(async (start?: number, end?: number): Promis
 
 export const fetchHomeGroups = cache(async (): Promise<HomeGroup[]> => {
   return client.fetch(
-    `*[_type == "homeGroup"] | order(title asc) {
+    `*[_type == "homeGroup" && !(_id in path("drafts.**"))] | order(title asc) {
       _id,
       title,
       description,
@@ -117,12 +117,13 @@ export const fetchHomeGroups = cache(async (): Promise<HomeGroup[]> => {
 
 export const fetchEvents = cache(async (): Promise<Event[]> => {
   return client.fetch(
-    `*[_type == "event"] | order(date asc) {
+    `*[_type == "event" && !(_id in path("drafts.**"))] | order(date asc) {
       _id,
       name,
       description,
       date,
       location,
+      likes,
       image
     }`
   );
@@ -130,7 +131,7 @@ export const fetchEvents = cache(async (): Promise<Event[]> => {
 
 export const fetchLeadershipTeam = cache(async (): Promise<LeadershipTeam[]> => {
   return client.fetch(
-    `*[_type == "leadershipTeam"] | order(order asc) {
+    `*[_type == "leadershipTeam" && !(_id in path("drafts.**"))] | order(order asc) {
       _id,
       name,
       position,

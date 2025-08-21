@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Menu } from "lucide-react"
+import { Menu, Heart } from "lucide-react"
 import { motion, useAnimation } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 
@@ -272,10 +272,20 @@ export default function Page() {
                           fill
                           className="object-cover w-full h-full"
                         />
+                        {/* Likes count badge in top right corner */}
+                        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-full flex items-center gap-1 text-sm">
+                          <Heart className="w-3 h-3 fill-current" />
+                          <span>{event.likes || 0}</span>
+                        </div>
                       </div>
                     ) : (
-                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center relative">
                         <span className="text-gray-400">No Image</span>
+                        {/* Likes count badge in top right corner */}
+                        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-full flex items-center gap-1 text-sm">
+                          <Heart className="w-3 h-3 fill-current" />
+                          <span>{event.likes || 0}</span>
+                        </div>
                       </div>
                     )}
                     <div className="flex flex-col p-6 flex-1 text-left">
@@ -322,6 +332,11 @@ export default function Page() {
                   </div>
                 )}
                 <h3 className="text-2xl font-bold mb-2">{modalEvent.name}</h3>
+                {/* Likes count */}
+                <div className="flex items-center gap-1 mb-3 text-gray-600">
+                  <Heart className="w-4 h-4 fill-current text-red-500" />
+                  <span className="text-sm font-medium">{modalEvent.likes || 0} likes</span>
+                </div>
                 <p className="text-gray-600 font-medium mb-1">{modalEvent.location || 'TBD'}</p>
                 <p className="text-gray-500 text-sm mb-4">
                   {modalEvent.date 

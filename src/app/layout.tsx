@@ -9,7 +9,23 @@ const playfairDisplay = Playfair_Display({ subsets: ["latin"], variable: "--font
 export const metadata = {
   title: "East Gate Jax",
   description: "A missional community living upon the basis of the eternal covenant of Jesus Christ",
-    generator: 'v0.dev'
+  generator: 'v0.dev',
+  icons: {
+    icon: [
+      {
+        url: '/favicon-16x16.svg',
+        sizes: '16x16',
+        type: 'image/svg+xml',
+      },
+      {
+        url: '/favicon.svg',
+        sizes: '32x32',
+        type: 'image/svg+xml',
+      },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({

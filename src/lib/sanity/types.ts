@@ -120,6 +120,7 @@ export interface Event {
   date?: string; // Optional - will show "TBD" if not provided
   description: string;
   location?: string; // Optional - will show "TBD" if not provided
+  likes?: number; // Total likes count from Sanity
   image?: {
     asset: { _ref: string; _type: string };
     alt?: string;

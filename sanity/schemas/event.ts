@@ -35,6 +35,14 @@ export default defineType({
       type: 'image',
       options: { hotspot: true },
     }),
+    defineField({
+      name: 'likes',
+      title: 'Likes Count',
+      type: 'number',
+      initialValue: 0,
+      validation: (Rule) => Rule.min(0),
+      description: 'Total number of likes for this event',
+    }),
   ],
   preview: {
     select: {
