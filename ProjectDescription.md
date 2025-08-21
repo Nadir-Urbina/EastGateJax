@@ -1,7 +1,7 @@
-East Gate Kingdom Fellowship Project:
+East Gate Jax Project:
 
 
-This project is a website for a christian ministry called East Gate Kingdom Fellowship, the website needs to be engaging, visually appealing.
+This project is a website for a christian ministry called East Gate Jax, the website needs to be engaging, visually appealing.
 
 The main things we need to expose is ministry activities, testimonies, preachings, and there is a very important section called 
 encounter home groups, where we will display a map and some addresses, the tool I'm using is called Mapbox for interactive maps.

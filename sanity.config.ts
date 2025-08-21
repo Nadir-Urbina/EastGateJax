@@ -8,7 +8,7 @@ import React from 'react';
 
 export default defineConfig({
   name: 'default',
-  title: 'East Gate Kingdom Fellowship',
+  title: 'East Gate Jax',
   
   projectId: 'peh0hj3p',
   dataset: 'production',

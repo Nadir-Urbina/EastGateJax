@@ -15,7 +15,7 @@ export default defineType({
       name: 'date',
       title: 'Event Date',
       type: 'datetime',
-      validation: (Rule) => Rule.required(),
+      description: 'Leave empty to display "TBD" on the website',
     }),
     defineField({
       name: 'description',
@@ -27,7 +27,7 @@ export default defineType({
       name: 'location',
       title: 'Location',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      description: 'Leave empty to display "TBD" on the website',
     }),
     defineField({
       name: 'image',

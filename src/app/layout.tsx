@@ -7,7 +7,7 @@ const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat
 const playfairDisplay = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" })
 
 export const metadata = {
-  title: "East Gate Kingdom Fellowship",
+  title: "East Gate Jax",
   description: "A missional community living upon the basis of the eternal covenant of Jesus Christ",
     generator: 'v0.dev'
 }

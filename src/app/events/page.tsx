@@ -2,11 +2,14 @@ import { Suspense } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { fetchEvents } from "@/lib/sanity/sanity.utils";
-import { formatDate } from "@/lib/utils";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { projectId, getSanityImageSrcFromRef } from "@/lib/sanity/client";
+import { projectId } from "@/lib/sanity/client";
 import { Calendar, MapPin, Clock } from "lucide-react";
+import { EventCard } from "@/components/event-card";
+
+// Fallback image for hero section
+const HERO_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/newEGHeroimg-GJFwdnDP12Ycw5eU1ZnyDkZmTcGrKZ.png";
 
 interface EventsPageProps {
   searchParams: {
@@ -14,47 +17,12 @@ interface EventsPageProps {
   };
 }
 
-// Fallback image for events that don't have their own image
-const HERO_IMAGE = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/newEGHeroimg-GJFwdnDP12Ycw5eU1ZnyDkZmTcGrKZ.png";
-
-// Helper function for event image URLs (consistent with blog page approach)
-function getEventImageUrl(image: any) {
-  if (!image || !image.asset || !image.asset._ref) return '';
-  return getSanityImageSrcFromRef(image.asset._ref);
-}
-
-/**
- * Safely get image URL from Sanity image object
- */
-const getSafeImageUrl = (image: any): string => {
-  const imageUrl = getEventImageUrl(image);
-  return imageUrl || HERO_IMAGE;
-};
-
-/**
- * Format event date and time for display
- */
-const formatEventDateTime = (dateString: string) => {
-  const date = new Date(dateString);
-  return {
-    date: date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    }),
-    time: date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true 
-    }),
-    dayOfWeek: date.toLocaleDateString('en-US', { weekday: 'long' })
-  };
-};
-
 /**
  * Determine if an event is upcoming, current, or past
  */
-const getEventStatus = (dateString: string) => {
+const getEventStatus = (dateString?: string) => {
+  if (!dateString) return 'tbd';
+  
   const eventDate = new Date(dateString);
   const now = new Date();
   const timeDiff = eventDate.getTime() - now.getTime();
@@ -93,6 +61,11 @@ async function EventsContent({ searchParams }: EventsPageProps) {
     
     // Sort events by date (upcoming first, then past events in reverse chronological order)
     const sortedEvents = events.sort((a, b) => {
+      // Handle events without dates - put them at the top
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return -1;
+      if (!b.date) return 1;
+      
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
       const now = new Date();
@@ -107,7 +80,10 @@ async function EventsContent({ searchParams }: EventsPageProps) {
     });
 
     // Group events by status
-    const upcomingEvents = sortedEvents.filter(event => getEventStatus(event.date) !== 'past');
+    const upcomingEvents = sortedEvents.filter(event => {
+      const status = getEventStatus(event.date);
+      return status !== 'past';
+    });
     const pastEvents = sortedEvents.filter(event => getEventStatus(event.date) === 'past');
 
     return (
@@ -163,75 +139,9 @@ async function EventsContent({ searchParams }: EventsPageProps) {
 
             {upcomingEvents.length > 0 ? (
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {upcomingEvents.map((event) => {
-                  const { date, time, dayOfWeek } = formatEventDateTime(event.date);
-                  const status = getEventStatus(event.date);
-                  const imageUrl = getSafeImageUrl(event.image);
-
-                  return (
-                    <article key={event._id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                      <div className="relative h-48">
-                        <Image
-                          src={imageUrl}
-                          alt={event.image?.alt || event.name}
-                          fill
-                          className="object-cover w-full h-full"
-                        />
-                        {status === 'today' && (
-                          <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                            Today
-                          </div>
-                        )}
-                        {status === 'this-week' && (
-                          <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                            This Week
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="p-6">
-                        <div className="mb-3 flex items-center text-sm text-gray-500">
-                          <Calendar className="w-4 h-4 mr-2" />
-                          <span>{dayOfWeek}, {date}</span>
-                        </div>
-                        
-                        <h3 className="mb-3 text-xl font-bold text-gray-900 hover:text-primary transition-colors">
-                          {event.name}
-                        </h3>
-                        
-                        <div className="mb-3 flex items-center text-sm text-gray-600">
-                          <Clock className="w-4 h-4 mr-2" />
-                          <span>{time}</span>
-                        </div>
-                        
-                        <div className="mb-4 flex items-center text-sm text-gray-600">
-                          <MapPin className="w-4 h-4 mr-2" />
-                          <span>{event.location}</span>
-                        </div>
-                        
-                        <p className="text-gray-700 mb-4 line-clamp-3">
-                          {event.description}
-                        </p>
-                        
-                        <div className="flex justify-between items-center">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            status === 'today' ? 'bg-red-100 text-red-800' :
-                            status === 'this-week' ? 'bg-orange-100 text-orange-800' :
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {status === 'today' ? 'Today' :
-                             status === 'this-week' ? 'This Week' :
-                             'Upcoming'}
-                          </span>
-                          
-                          <button className="text-primary hover:text-primary/80 font-medium text-sm transition-colors">
-                            Learn More →
-                          </button>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
+                {upcomingEvents.map((event) => (
+                  <EventCard key={event._id} event={event} />
+                ))}
               </div>
             ) : (
               <div className="text-center py-12">
@@ -257,38 +167,9 @@ async function EventsContent({ searchParams }: EventsPageProps) {
               </div>
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {pastEvents.slice(0, 8).map((event) => {
-                  const { date, time } = formatEventDateTime(event.date);
-                  const imageUrl = getSafeImageUrl(event.image);
-
-                  return (
-                    <article key={event._id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="relative h-32">
-                        <Image
-                          src={imageUrl}
-                          alt={event.image?.alt || event.name}
-                          fill
-                          className="object-cover w-full h-full"
-                        />
-                        <div className="absolute inset-0 bg-black/20" />
-                      </div>
-                      
-                      <div className="p-4">
-                        <h3 className="mb-2 text-lg font-semibold text-gray-900 line-clamp-2">
-                          {event.name}
-                        </h3>
-                        
-                        <div className="mb-2 text-sm text-gray-500">
-                          {date}
-                        </div>
-                        
-                        <p className="text-gray-600 text-sm line-clamp-2">
-                          {event.description}
-                        </p>
-                      </div>
-                    </article>
-                  );
-                })}
+                {pastEvents.slice(0, 8).map((event) => (
+                  <EventCard key={event._id} event={event} isPast={true} />
+                ))}
               </div>
               
               {pastEvents.length > 8 && (

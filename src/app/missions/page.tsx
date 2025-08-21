@@ -10,8 +10,8 @@ import { Header } from '@/components/header';
 import { projectId } from '@/lib/sanity/client';
 
 export const metadata = {
-  title: 'Missions | East Gate Kingdom Fellowship',
-  description: 'Current and upcoming mission work at East Gate Kingdom Fellowship in Costa Rica, Australia, New Zealand, and beyond.',
+  title: 'Missions | East Gate Jax',
+  description: 'Current and upcoming mission work at East Gate Jax in Costa Rica, Australia, New Zealand, and beyond.',
 };
 
 interface Mission {
@@ -50,7 +50,7 @@ export default async function MissionsPage() {
           ongoing: true,
           image: null as any,
           contactPerson: 'John Smith',
-          donationLink: 'https://example.com/donate',
+          donationLink: 'https://give.tithe.ly/?formId=fc03799a-0541-44e4-91a9-d53c7f5fd9d3',
           order: 1,
         },
         {
@@ -62,7 +62,7 @@ export default async function MissionsPage() {
           ongoing: true,
           image: null as any,
           contactPerson: 'Sarah Johnson',
-          donationLink: 'https://example.com/donate',
+          donationLink: 'https://give.tithe.ly/?formId=fc03799a-0541-44e4-91a9-d53c7f5fd9d3',
           order: 2,
         },
         {
@@ -74,7 +74,7 @@ export default async function MissionsPage() {
           ongoing: true,
           image: null as any,
           contactPerson: 'Michael Brown',
-          donationLink: 'https://example.com/donate',
+          donationLink: 'https://give.tithe.ly/?formId=fc03799a-0541-44e4-91a9-d53c7f5fd9d3',
           order: 3,
         },
       ];
@@ -131,7 +131,7 @@ export default async function MissionsPage() {
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="mb-8 text-3xl font-bold">Our Mission Focus</h2>
             <p className="mb-6 text-lg text-gray-700">
-              At East Gate Kingdom Fellowship, we are committed to fulfilling the Great Commission by taking the gospel to the ends of the earth. Our mission work focuses on:
+              At East Gate Jax, we are committed to fulfilling the Great Commission by taking the gospel to the ends of the earth. Our mission work focuses on:
             </p>
             <div className="grid gap-6 mt-12 md:grid-cols-3">
               <div className="p-6 bg-gray-50 rounded-lg">

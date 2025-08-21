@@ -117,9 +117,9 @@ export interface Mission {
 export interface Event {
   _id: string;
   name: string;
-  date: string;
+  date?: string; // Optional - will show "TBD" if not provided
   description: string;
-  location: string;
+  location?: string; // Optional - will show "TBD" if not provided
   image?: {
     asset: { _ref: string; _type: string };
     alt?: string;
@@ -147,5 +147,4 @@ export interface HomePageData {
   sermons: Sermon[];
   blogPosts: BlogPost[];
   homeGroups?: HomeGroup[];
-  leadershipTeam?: LeadershipTeam[];
 } 

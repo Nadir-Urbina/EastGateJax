@@ -142,10 +142,10 @@ export default function Page() {
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-6 md:flex">
-            <Link href="/about" className="text-sm font-medium text-gray-300 hover:text-primary">
+            <Link href="/about-us" className="text-sm font-medium text-gray-300 hover:text-primary">
               About
             </Link>
-            <Link href="/ministries" className="text-sm font-medium text-gray-300 hover:text-primary">
+            <Link href="#ministries" className="text-sm font-medium text-gray-300 hover:text-primary">
               Ministries
             </Link>
             <Link href="/events" className="text-sm font-medium text-gray-300 hover:text-primary">
@@ -154,7 +154,7 @@ export default function Page() {
             <Link href="/blog" className="text-sm font-medium text-gray-300 hover:text-primary">
               Blog
             </Link>
-            <Link href="/donate" className="inline-flex h-10 items-center justify-center rounded-md bg-amber-400 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <Link href="https://give.tithe.ly/?formId=fc03799a-0541-44e4-91a9-d53c7f5fd9d3" target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center justify-center rounded-md bg-amber-400 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
               Donate
             </Link>
           </nav>
@@ -168,10 +168,10 @@ export default function Page() {
             </SheetTrigger>
             <SheetContent>
               <div className="grid gap-4 py-4">
-                <Link href="/about" className="text-sm font-medium hover:text-primary">
+                <Link href="/about-us" className="text-sm font-medium hover:text-primary">
                   About
                 </Link>
-                <Link href="/ministries" className="text-sm font-medium hover:text-primary">
+                <Link href="#ministries" className="text-sm font-medium hover:text-primary">
                   Ministries
                 </Link>
                 <Link href="/events" className="text-sm font-medium hover:text-primary">
@@ -180,7 +180,7 @@ export default function Page() {
                 <Link href="/blog" className="text-sm font-medium hover:text-primary">
                   Blog
                 </Link>
-                <Link href="/donate" className="inline-flex h-10 w-full items-center justify-center rounded-md bg-amber-400 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <Link href="https://give.tithe.ly/?formId=fc03799a-0541-44e4-91a9-d53c7f5fd9d3" target="_blank" rel="noopener noreferrer" className="inline-flex h-10 w-full items-center justify-center rounded-md bg-amber-400 px-4 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                   Donate
                 </Link>
               </div>
@@ -211,13 +211,13 @@ export default function Page() {
               The King Is Here
             </p>
             <p className="mb-8 text-lg text-gray-200">
-              A missional community living upon the basis of the eternal covenant of Jesus Christ, fulfilling His mission to reach the nations.
+              Join us in Worship every Sunday at 10:00 am in 605 Wells Rd, Orange Park, FL 32073.
             </p>
             <div className="flex justify-center gap-4">
-              <Link href="/visit" className="inline-flex h-11 items-center justify-center rounded-md bg-amber-400 px-8 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                Plan Your Visit
+              <Link href="https://maps.app.goo.gl/cJdipcmxCFJN1MPb6" className="inline-flex h-11 items-center justify-center rounded-md bg-amber-400 px-8 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                Get Directions
               </Link>
-              <Link href="/watch" className="inline-flex h-11 items-center justify-center rounded-md border border-gray-300 bg-transparent px-8 text-sm font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <Link href="https://www.youtube.com/@EastGateJax" className="inline-flex h-11 items-center justify-center rounded-md border border-gray-300 bg-transparent px-8 text-sm font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                 Watch Online
               </Link>
             </div>
@@ -231,7 +231,7 @@ export default function Page() {
           <div className="container px-4">
             {/* Center-aligned title */}
             <div className="text-center mb-12">
-              <h2 className="mb-4 text-3xl font-bold">Join Us in Worship</h2>
+              <h2 className="mb-4 text-3xl font-bold">Upcoming Events</h2>
             </div>
             
             {eventsLoading ? (
@@ -253,7 +253,7 @@ export default function Page() {
               <div className="grid gap-8 sm:grid-cols-2">
                 <div className="rounded-lg bg-white p-6 shadow-sm w-full">
                   <h3 className="mb-2 font-semibold">Sunday Service</h3>
-                  <p className="text-gray-600">10:30 AM</p>
+                  <p className="text-gray-600">10:00 AM</p>
                 </div>
                 <div className="rounded-lg bg-white p-6 shadow-sm w-full">
                   <h3 className="mb-2 font-semibold">Wednesday Bible Study</h3>
@@ -280,8 +280,13 @@ export default function Page() {
                     )}
                     <div className="flex flex-col p-6 flex-1 text-left">
                       <h3 className="mb-2 font-semibold text-lg truncate">{event.name}</h3>
-                      <p className="text-gray-600 font-medium mb-1 truncate">{event.location}</p>
-                      <p className="text-gray-500 text-sm mb-2">{new Date(event.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                      <p className="text-gray-600 font-medium mb-1 truncate">{event.location || 'TBD'}</p>
+                      <p className="text-gray-500 text-sm mb-2">
+                        {event.date 
+                          ? new Date(event.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) 
+                          : 'TBD'
+                        }
+                      </p>
                       <p className="text-gray-700 text-sm mb-4">{event.description.length > 150 ? event.description.slice(0, 150) + '…' : event.description}</p>
                       <button
                         className="mt-auto px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
@@ -317,8 +322,13 @@ export default function Page() {
                   </div>
                 )}
                 <h3 className="text-2xl font-bold mb-2">{modalEvent.name}</h3>
-                <p className="text-gray-600 font-medium mb-1">{modalEvent.location}</p>
-                <p className="text-gray-500 text-sm mb-4">{new Date(modalEvent.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                <p className="text-gray-600 font-medium mb-1">{modalEvent.location || 'TBD'}</p>
+                <p className="text-gray-500 text-sm mb-4">
+                  {modalEvent.date 
+                    ? new Date(modalEvent.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) 
+                    : 'TBD'
+                  }
+                </p>
                 <p className="text-gray-700 whitespace-pre-line">{modalEvent.description}</p>
               </div>
             </div>
@@ -357,12 +367,14 @@ export default function Page() {
 
       {/* Ministry Dynamics */}
       <AnimatedSection>
-        <MinistryDynamics ministries={homeData.ministries} isLoading={loading} />
+        <div id="ministries">
+          <MinistryDynamics ministries={homeData.ministries} isLoading={loading} />
+        </div>
       </AnimatedSection>
 
       {/* Leadership Team */}
       <AnimatedSection>
-        <LeadershipTeam leaders={homeData.leadershipTeam || []} isLoading={loading} />
+        <LeadershipTeam />
       </AnimatedSection>
 
       {/* Testimonials */}

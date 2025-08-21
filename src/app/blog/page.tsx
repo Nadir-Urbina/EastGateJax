@@ -9,8 +9,8 @@ import { Footer } from "@/components/footer";
 import { projectId, getSanityImageSrcFromRef } from "@/lib/sanity/client";
 
 export const metadata: Metadata = {
-  title: "Blog - East Gate Kingdom Fellowship",
-  description: "Read our latest articles, devotionals, and updates from East Gate Kingdom Fellowship.",
+  title: "Blog - East Gate Jax",
+  description: "Read our latest articles, devotionals, and updates from East Gate Jax.",
 };
 
 interface BlogPageProps {

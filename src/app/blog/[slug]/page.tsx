@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   // Check if Sanity is properly configured
   if (!projectId || projectId === 'placeholder-project-id') {
     return {
-      title: "Blog - East Gate Kingdom Fellowship",
+      title: "Blog - East Gate Jax",
       description: "Blog functionality requires Sanity configuration."
     };
   }
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   
   if (!post) {
     return {
-      title: "Blog Post Not Found - East Gate Kingdom Fellowship",
+      title: "Blog Post Not Found - East Gate Jax",
       description: "The requested blog post could not be found."
     };
   }
@@ -52,8 +52,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const imageUrl = getBlogImageUrl(post.mainImage);
   
   return {
-    title: `${post.title} - East Gate Kingdom Fellowship Blog`,
-    description: post.excerpt || "Read this blog post from East Gate Kingdom Fellowship",
+    title: `${post.title} - East Gate Jax Blog`,
+    description: post.excerpt || "Read this blog post from East Gate Jax",
     openGraph: imageUrl ? {
       images: [imageUrl],
     } : undefined,

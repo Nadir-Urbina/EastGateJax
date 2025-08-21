@@ -7,6 +7,7 @@ export const client = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2022-03-25',
   useCdn: false, // Set to false for now to avoid caching issues
+  token: process.env.SANITY_API_TOKEN, // Required for write operations
 });
 
 export const fetchMinistryDynamics = cache(async (): Promise<MinistryDynamic[]> => {
@@ -164,8 +165,7 @@ export async function fetchHomeData() {
     testimonialsQuery, 
     sermonsQuery, 
     recentBlogPostsQuery,
-    homeGroupsQuery,
-    leadershipTeamQuery
+    homeGroupsQuery
   } = await import('./queries');
 
   console.log('Fetching home data from Sanity project:', client.config().projectId);
@@ -193,10 +193,6 @@ export async function fetchHomeData() {
         console.error('Error fetching home groups:', e);
         return [];
       }),
-      client.fetch(leadershipTeamQuery).catch(e => {
-        console.error('Error fetching leadership team:', e);
-        return [];
-      }),
     ]);
 
     const [
@@ -204,8 +200,7 @@ export async function fetchHomeData() {
       testimonialResult,
       sermonResult,
       blogPostResult,
-      homeGroupResult,
-      leadershipResult
+      homeGroupResult
     ] = results;
 
     // Extract values or use empty arrays for failures
@@ -214,15 +209,13 @@ export async function fetchHomeData() {
     const sermons = sermonResult.status === 'fulfilled' ? sermonResult.value : [];
     const blogPosts = blogPostResult.status === 'fulfilled' ? blogPostResult.value : [];
     const homeGroups = homeGroupResult.status === 'fulfilled' ? homeGroupResult.value : [];
-    const leadershipTeam = leadershipResult.status === 'fulfilled' ? leadershipResult.value : [];
 
     console.log('Fetched data counts:', { 
       ministries: ministries?.length || 0, 
       testimonials: testimonials?.length || 0,
       sermons: sermons?.length || 0,
       blogPosts: blogPosts?.length || 0,
-      homeGroups: homeGroups?.length || 0,
-      leadershipTeam: leadershipTeam?.length || 0
+      homeGroups: homeGroups?.length || 0
     });
 
     return {
@@ -231,7 +224,6 @@ export async function fetchHomeData() {
       sermons,
       blogPosts,
       homeGroups,
-      leadershipTeam,
     };
   } catch (error) {
     console.error('Error fetching home page data:', error);
@@ -241,7 +233,6 @@ export async function fetchHomeData() {
       sermons: [],
       blogPosts: [],
       homeGroups: [],
-      leadershipTeam: [],
     };
   }
 }

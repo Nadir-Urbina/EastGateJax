@@ -55,11 +55,12 @@ export const homeGroupsQuery = `*[_type == "homeGroup"] {
 }`;
 
 // Leadership Team - Simple version
-export const leadershipTeamQuery = `*[_type == "leadershipTeam"] {
+export const leadershipTeamQuery = `*[_type == "leadershipTeam"] | order(order asc) {
   _id,
   name,
   position,
   image,
+  order,
   socialMedia,
   bio
 }`;

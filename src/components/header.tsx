@@ -47,7 +47,7 @@ export function Header() {
           <Link href="/about-us" className="text-sm font-medium text-gray-300 hover:text-primary">
             About
           </Link>
-          <Link href="/ministries" className="text-sm font-medium text-gray-300 hover:text-primary">
+          <Link href="/#ministries" className="text-sm font-medium text-gray-300 hover:text-primary">
             Ministries
           </Link>
           <Link href="/events" className="text-sm font-medium text-gray-300 hover:text-primary">
@@ -73,7 +73,7 @@ export function Header() {
               <Link href="/about-us" className="text-sm font-medium hover:text-primary">
                 About
               </Link>
-              <Link href="/ministries" className="text-sm font-medium hover:text-primary">
+              <Link href="/#ministries" className="text-sm font-medium hover:text-primary">
                 Ministries
               </Link>
               <Link href="/events" className="text-sm font-medium hover:text-primary">

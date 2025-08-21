@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'East Gate Kingdom Fellowship - Admin',
-  description: 'Admin panel for East Gate Kingdom Fellowship',
+  title: 'East Gate Jax - Admin',
+  description: 'Admin panel for East Gate Jax',
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
